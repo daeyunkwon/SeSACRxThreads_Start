@@ -73,11 +73,7 @@ class PhoneViewController: BaseViewController {
             .disposed(by: disposeBag)
         
         phoneTextField.rx.text.orEmpty
-            .bind(to: viewModel.validationTextNumber)
-            .disposed(by: disposeBag)
-        
-        phoneTextField.rx.text.orEmpty
-            .bind(to: viewModel.validationTextHyphen)
+            .bind(to: viewModel.validationTextNumberAndHyphen)
             .disposed(by: disposeBag)
         
         nextButton.rx.tap

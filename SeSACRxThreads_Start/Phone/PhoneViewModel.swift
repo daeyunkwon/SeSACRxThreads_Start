@@ -19,9 +19,7 @@ class PhoneViewModel {
     
     var validationTextCount = PublishSubject<String>()
     
-    var validationTextNumber = PublishSubject<String>()
-    
-    var validationTextHyphen = PublishSubject<String>()
+    var validationTextNumberAndHyphen = PublishSubject<String>()
     
     //MARK: - Outputs
     
@@ -35,8 +33,9 @@ class PhoneViewModel {
     
     private(set) var isValid = PublishSubject<Bool>()
     
+    //MARK: - Init
+    
     init() {
-        
         validationTextCount
             .filter { !$0.isEmpty }
             .map { $0.count >= 10 }
@@ -49,21 +48,7 @@ class PhoneViewModel {
             }
             .disposed(by: disposeBag)
         
-        validationTextNumber
-            .filter { !$0.isEmpty } // 빈 문자열을 필터링
-            .map {
-                return Int($0) != nil ? true : false
-            }
-            .bind(with: self) { owner, value in
-                owner.isNumberValid.onNext(value)
-                
-                if !value {
-                    owner.validationMessage.onNext("숫자만 입력해주세요!")
-                }
-            }
-            .disposed(by: disposeBag)
-        
-        validationTextHyphen
+        validationTextNumberAndHyphen
             .filter { !$0.isEmpty } // 빈 문자열을 필터링
             .bind(with: self) { owner, value in
                 if Int(value) != nil {
