@@ -19,6 +19,7 @@
 		44E5D3C82C5B9F1B008AD8B3 /* SignTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3C72C5B9F1B008AD8B3 /* SignTextField.swift */; };
 		44E5D3CA2C5B9F6C008AD8B3 /* PointButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3C92C5B9F6C008AD8B3 /* PointButton.swift */; };
 		44E5D3CE2C5CC460008AD8B3 /* PhoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3CD2C5CC460008AD8B3 /* PhoneViewController.swift */; };
+		44E5D3D02C5CE0D1008AD8B3 /* BirthdayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3CF2C5CE0D1008AD8B3 /* BirthdayViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		44E5D3C72C5B9F1B008AD8B3 /* SignTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignTextField.swift; sourceTree = "<group>"; };
 		44E5D3C92C5B9F6C008AD8B3 /* PointButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointButton.swift; sourceTree = "<group>"; };
 		44E5D3CD2C5CC460008AD8B3 /* PhoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneViewController.swift; sourceTree = "<group>"; };
+		44E5D3CF2C5CE0D1008AD8B3 /* BirthdayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 				44E5D3B72C5B9D2F008AD8B3 /* Info.plist */,
 				44E5D3AD2C5B9D2E008AD8B3 /* PasswordViewController.swift */,
 				44E5D3CD2C5CC460008AD8B3 /* PhoneViewController.swift */,
+				44E5D3CF2C5CE0D1008AD8B3 /* BirthdayViewController.swift */,
 			);
 			path = SeSACRxThreads_Start;
 			sourceTree = "<group>";
@@ -182,6 +185,7 @@
 				44E5D3CA2C5B9F6C008AD8B3 /* PointButton.swift in Sources */,
 				44E5D3BE2C5B9E07008AD8B3 /* BaseViewController.swift in Sources */,
 				44E5D3AA2C5B9D2E008AD8B3 /* AppDelegate.swift in Sources */,
+				44E5D3D02C5CE0D1008AD8B3 /* BirthdayViewController.swift in Sources */,
 				44E5D3AC2C5B9D2E008AD8B3 /* SceneDelegate.swift in Sources */,
 				44E5D3CE2C5CC460008AD8B3 /* PhoneViewController.swift in Sources */,
 			);

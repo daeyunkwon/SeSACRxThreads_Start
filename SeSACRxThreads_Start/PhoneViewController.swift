@@ -46,8 +46,6 @@ class PhoneViewController: BaseViewController {
     //MARK: - Configurations
     
     override func bind() {
-        let debug = Observable.of("test").debug("username")
-        
         phoneTextFieldInitialValue
             .bind(to: phoneTextField.rx.text.orEmpty)
             .disposed(by: disposeBag)
