@@ -63,9 +63,9 @@ class PasswordViewController: BaseViewController {
             .disposed(by: disposeBag)
         
         nextButton.rx.tap
-            .bind { _ in
-                print("버튼 클릭됨")
-            }
+            .bind(with: self, onNext: { owner, _ in
+                owner.showCompletionAlert()
+            })
             .disposed(by: disposeBag)
     }
     

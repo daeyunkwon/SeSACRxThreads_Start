@@ -20,4 +20,10 @@ class BaseViewController: UIViewController {
     
     func configureLayout() { }
     
+    func showCompletionAlert() {
+        let alert = UIAlertController(title: "알림", message: "성공!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
+    
 }
