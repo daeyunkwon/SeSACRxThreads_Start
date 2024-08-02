@@ -16,6 +16,8 @@ class PasswordViewController: BaseViewController {
 
     //MARK: - Properties
     
+    let viewModel = PasswordViewModel()
+    
     let disposeBag = DisposeBag()
     
     //MARK: - UI Components
@@ -31,8 +33,6 @@ class PasswordViewController: BaseViewController {
         return label
     }()
     
-    let validText = Observable.just("8자 이상 입력해주세요!")
-    
     //MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -42,13 +42,31 @@ class PasswordViewController: BaseViewController {
     //MARK: - Configurations
     
     override func bind() {
+        viewModel.viewDidLoad
+            .bind(onNext: { [weak self] enabledValue, hiddenValue in
+                self?.nextButton.isEnabled = enabledValue
+                self?.nextButton.backgroundColor = .systemGray2
+                self?.descriptionLabel.isHidden = hiddenValue
+            })
+            .disposed(by: disposeBag)
         
-        validText
+        viewModel.validationMessage
             .bind(to: descriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
         passwordTextField.rx.text.orEmpty
-            .map { $0.count >= 8 }
+            .filter { !$0.isEmpty }
+            .bind(to: viewModel.validPasswordText)
+            .disposed(by: disposeBag)
+        
+        passwordTextField.rx.text.orEmpty
+            .filter { $0.isEmpty }
+            .bind(with: self, onNext: { owner, _ in
+                owner.descriptionLabel.isHidden = true
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.isPasswordValid
             .bind(with: self) { owner, value in
                 owner.descriptionLabel.isHidden = value
                 owner.nextButton.isEnabled = value
@@ -58,7 +76,6 @@ class PasswordViewController: BaseViewController {
                 } else {
                     owner.nextButton.backgroundColor = UIColor.systemGray2
                 }
-                
             }
             .disposed(by: disposeBag)
         

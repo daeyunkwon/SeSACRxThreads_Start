@@ -139,6 +139,10 @@ class BirthdayViewController: BaseViewController {
         birthDayPicker.rx.date
             .map { Calendar.current.dateComponents([.year, .month, .day], from: $0) }
             .bind(with: self) { owner, value in
+                owner.year.accept(value.year ?? 0)
+                owner.month.accept(value.month ?? 0)
+                owner.day.accept(value.day ?? 0)
+                
                 //만나이 계산법: 현재 연도에서 출생 연도를 뺀 다음, 생일이 지났으면 그대로, 지나지 않았으면 1년을 더 빼기
                 let todayComponent = Calendar.current.dateComponents([.year, .month, .day], from: Date())
                 
