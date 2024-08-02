@@ -22,6 +22,7 @@
 		44E5D3D02C5CE0D1008AD8B3 /* BirthdayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3CF2C5CE0D1008AD8B3 /* BirthdayViewController.swift */; };
 		44E5D3D32C5D0DD0008AD8B3 /* PasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3D22C5D0DD0008AD8B3 /* PasswordViewModel.swift */; };
 		44E5D3D62C5D51A5008AD8B3 /* PhoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3D52C5D51A5008AD8B3 /* PhoneViewModel.swift */; };
+		44E5D3D92C5D5B02008AD8B3 /* BirthdayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3D82C5D5B02008AD8B3 /* BirthdayViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		44E5D3CF2C5CE0D1008AD8B3 /* BirthdayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayViewController.swift; sourceTree = "<group>"; };
 		44E5D3D22C5D0DD0008AD8B3 /* PasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewModel.swift; sourceTree = "<group>"; };
 		44E5D3D52C5D51A5008AD8B3 /* PhoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneViewModel.swift; sourceTree = "<group>"; };
+		44E5D3D82C5D5B02008AD8B3 /* BirthdayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +84,7 @@
 				44E5D3B72C5B9D2F008AD8B3 /* Info.plist */,
 				44E5D3D12C5D0DBC008AD8B3 /* Password */,
 				44E5D3D42C5D5191008AD8B3 /* Phone */,
-				44E5D3CF2C5CE0D1008AD8B3 /* BirthdayViewController.swift */,
+				44E5D3D72C5D5AED008AD8B3 /* Birthday */,
 			);
 			path = SeSACRxThreads_Start;
 			sourceTree = "<group>";
@@ -121,6 +123,15 @@
 				44E5D3CD2C5CC460008AD8B3 /* PhoneViewController.swift */,
 			);
 			path = Phone;
+			sourceTree = "<group>";
+		};
+		44E5D3D72C5D5AED008AD8B3 /* Birthday */ = {
+			isa = PBXGroup;
+			children = (
+				44E5D3D82C5D5B02008AD8B3 /* BirthdayViewModel.swift */,
+				44E5D3CF2C5CE0D1008AD8B3 /* BirthdayViewController.swift */,
+			);
+			path = Birthday;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -208,6 +219,7 @@
 				44E5D3CA2C5B9F6C008AD8B3 /* PointButton.swift in Sources */,
 				44E5D3BE2C5B9E07008AD8B3 /* BaseViewController.swift in Sources */,
 				44E5D3AA2C5B9D2E008AD8B3 /* AppDelegate.swift in Sources */,
+				44E5D3D92C5D5B02008AD8B3 /* BirthdayViewModel.swift in Sources */,
 				44E5D3D02C5CE0D1008AD8B3 /* BirthdayViewController.swift in Sources */,
 				44E5D3D62C5D51A5008AD8B3 /* PhoneViewModel.swift in Sources */,
 				44E5D3AC2C5B9D2E008AD8B3 /* SceneDelegate.swift in Sources */,

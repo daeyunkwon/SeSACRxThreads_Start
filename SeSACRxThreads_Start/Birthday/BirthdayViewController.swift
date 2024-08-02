@@ -17,13 +17,7 @@ class BirthdayViewController: BaseViewController {
     
     let disposeBag = DisposeBag()
     
-    let todayInitialValue = Observable.just(Date())
-    
-    let year = PublishRelay<Int>()
-    let month = PublishRelay<Int>()
-    let day = PublishRelay<Int>()
-    
-    let ageValidationStatus = PublishSubject<Int>()
+    let viewModel = BirthdayViewModel()
     
     //MARK: - UI Components
     
@@ -92,35 +86,23 @@ class BirthdayViewController: BaseViewController {
     //MARK: - Configurations
     
     override func bind() {
-        year
-            .map { "\($0)년" }
+        viewModel.yearText
             .bind(to: yearLabel.rx.text)
             .disposed(by: disposeBag)
         
-        month
-            .map { "\($0)월" }
+        viewModel.monthText
             .bind(to: monthLabel.rx.text)
             .disposed(by: disposeBag)
         
-        day
-            .map { "\($0)일" }
+        viewModel.dayText
             .bind(to: dayLabel.rx.text)
             .disposed(by: disposeBag)
         
-        todayInitialValue
-            .bind(with: self) { owner, value in
-                owner.birthDayPicker.date = value
-                
-                let dateComponent = Calendar.current.dateComponents([.year, .month, .day], from: value)
-                
-                owner.year.accept(dateComponent.year ?? 0)
-                owner.month.accept(dateComponent.month ?? 0)
-                owner.day.accept(dateComponent.day ?? 0)
-            }
+        viewModel.today
+            .bind(to: birthDayPicker.rx.date)
             .disposed(by: disposeBag)
         
-        ageValidationStatus
-            .map { $0 >= 17 }
+        viewModel.isValidAge
             .bind(with: self) { owner, value in
                 owner.nextButton.isEnabled = value
                 
@@ -137,27 +119,7 @@ class BirthdayViewController: BaseViewController {
             .disposed(by: disposeBag)
         
         birthDayPicker.rx.date
-            .map { Calendar.current.dateComponents([.year, .month, .day], from: $0) }
-            .bind(with: self) { owner, value in
-                owner.year.accept(value.year ?? 0)
-                owner.month.accept(value.month ?? 0)
-                owner.day.accept(value.day ?? 0)
-                
-                //만나이 계산법: 현재 연도에서 출생 연도를 뺀 다음, 생일이 지났으면 그대로, 지나지 않았으면 1년을 더 빼기
-                let todayComponent = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-                
-                var age = (todayComponent.year ?? 0) - (value.year ?? 0)
-                
-                if value.month ?? 0 < todayComponent.month ?? 0 {
-                    age -= 1
-                } else if value.month ?? 0 == todayComponent.month ?? 0 {
-                    if value.day ?? 0 < todayComponent.day ?? 0 {
-                        age -= 1
-                    }
-                }
-                
-                owner.ageValidationStatus.onNext(age)
-            }
+            .bind(to: viewModel.calculationAge)
             .disposed(by: disposeBag)
         
         nextButton.rx.tap
