@@ -16,6 +16,8 @@ class PhoneViewController: BaseViewController {
     
     let disposeBag = DisposeBag()
     
+    let viewModel = PhoneViewModel()
+    
     //MARK: - UI Components
     
     let phoneTextField = SignTextField(placeholderText: "연락처를 입력해주세요")
@@ -29,14 +31,6 @@ class PhoneViewController: BaseViewController {
         return label
     }()
     
-    let validationMessage = PublishSubject<String>()
-    let isValid = PublishSubject<Bool>()
-    
-    let isNumberValid = PublishSubject<Bool>()
-    let isCountValid = PublishSubject<Bool>()
-    
-    let phoneTextFieldInitialValue = Observable.just("010")
-    
     //MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -46,21 +40,22 @@ class PhoneViewController: BaseViewController {
     //MARK: - Configurations
     
     override func bind() {
-        phoneTextFieldInitialValue
+        phoneTextField.rx.text.orEmpty
+            .filter { $0.isEmpty }
+            .bind(with: self, onNext: { owner, _ in
+                owner.descriptionLabel.isHidden = true
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.phoneTextFieldInitialValue
             .bind(to: phoneTextField.rx.text.orEmpty)
             .disposed(by: disposeBag)
         
-        validationMessage
+        viewModel.validationMessage
             .bind(to: descriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
-        Observable.combineLatest(isNumberValid ,isCountValid) { numberValid, countValid in
-            return numberValid && countValid
-        }
-        .bind(to: isValid)
-        .disposed(by: disposeBag)
-        
-        isValid
+        viewModel.isValid
             .bind(with: self) { owner, value in
                 owner.descriptionLabel.isHidden = value
                 owner.nextButton.isEnabled = value
@@ -74,45 +69,15 @@ class PhoneViewController: BaseViewController {
             .disposed(by: disposeBag)
             
         phoneTextField.rx.text.orEmpty
-            .map { $0.count >= 10 }
-            .bind(with: self) { owner, value in
-                owner.isCountValid.onNext(value)
-                
-                if !value {
-                    owner.validationMessage.onNext("10자 이상 입력해주세요!")
-                }
-            }
+            .bind(to: viewModel.validationTextCount)
             .disposed(by: disposeBag)
         
         phoneTextField.rx.text.orEmpty
-            .filter { !$0.isEmpty } // 빈 문자열을 필터링
-            .map {
-                return Int($0) != nil ? true : false
-            }
-            .bind(with: self) { owner, value in
-                owner.isNumberValid.onNext(value)
-                
-                if !value {
-                    owner.validationMessage.onNext("숫자만 입력해주세요!")
-                }
-            }
+            .bind(to: viewModel.validationTextNumber)
             .disposed(by: disposeBag)
         
         phoneTextField.rx.text.orEmpty
-            .filter { !$0.isEmpty } // 빈 문자열을 필터링
-            .bind(with: self) { owner, value in
-                if Int(value) != nil {
-                    owner.isNumberValid.onNext(true)
-                } else {
-                    owner.isNumberValid.onNext(false)
-                    
-                    if value.contains("-") {
-                        owner.validationMessage.onNext("'-'를 제외한 숫자만 입력해주세요!")
-                    } else {
-                        owner.validationMessage.onNext("숫자만 입력해주세요!")
-                    }
-                }
-            }
+            .bind(to: viewModel.validationTextHyphen)
             .disposed(by: disposeBag)
         
         nextButton.rx.tap
