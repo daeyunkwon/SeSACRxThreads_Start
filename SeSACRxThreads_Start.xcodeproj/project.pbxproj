@@ -23,7 +23,25 @@
 		44E5D3D32C5D0DD0008AD8B3 /* PasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3D22C5D0DD0008AD8B3 /* PasswordViewModel.swift */; };
 		44E5D3D62C5D51A5008AD8B3 /* PhoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3D52C5D51A5008AD8B3 /* PhoneViewModel.swift */; };
 		44E5D3D92C5D5B02008AD8B3 /* BirthdayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3D82C5D5B02008AD8B3 /* BirthdayViewModel.swift */; };
+		44E5D3DB2C5DFE5D008AD8B3 /* ShoppingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3DA2C5DFE5D008AD8B3 /* ShoppingViewController.swift */; };
+		44E5D3DE2C5DFE75008AD8B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E5D3DD2C5DFE75008AD8B3 /* Model.swift */; };
+		44E5D3E12C5E0350008AD8B3 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 44E5D3E02C5E0350008AD8B3 /* RealmSwift */; };
+		44E5D3E22C5E035C008AD8B3 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 44E5D3E02C5E0350008AD8B3 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		44E5D3E32C5E035C008AD8B3 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				44E5D3E22C5E035C008AD8B3 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		44E5D3A62C5B9D2E008AD8B3 /* SeSACRxThreads_Start.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeSACRxThreads_Start.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -41,6 +59,8 @@
 		44E5D3D22C5D0DD0008AD8B3 /* PasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewModel.swift; sourceTree = "<group>"; };
 		44E5D3D52C5D51A5008AD8B3 /* PhoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneViewModel.swift; sourceTree = "<group>"; };
 		44E5D3D82C5D5B02008AD8B3 /* BirthdayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayViewModel.swift; sourceTree = "<group>"; };
+		44E5D3DA2C5DFE5D008AD8B3 /* ShoppingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingViewController.swift; sourceTree = "<group>"; };
+		44E5D3DD2C5DFE75008AD8B3 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44E5D3E12C5E0350008AD8B3 /* RealmSwift in Frameworks */,
 				44E5D3C62C5B9E46008AD8B3 /* SnapKit in Frameworks */,
 				44E5D3C32C5B9E39008AD8B3 /* RxSwift in Frameworks */,
 				44E5D3C12C5B9E39008AD8B3 /* RxCocoa in Frameworks */,
@@ -85,6 +106,7 @@
 				44E5D3D12C5D0DBC008AD8B3 /* Password */,
 				44E5D3D42C5D5191008AD8B3 /* Phone */,
 				44E5D3D72C5D5AED008AD8B3 /* Birthday */,
+				44E5D3DC2C5DFE61008AD8B3 /* Shopping */,
 			);
 			path = SeSACRxThreads_Start;
 			sourceTree = "<group>";
@@ -134,6 +156,15 @@
 			path = Birthday;
 			sourceTree = "<group>";
 		};
+		44E5D3DC2C5DFE61008AD8B3 /* Shopping */ = {
+			isa = PBXGroup;
+			children = (
+				44E5D3DD2C5DFE75008AD8B3 /* Model.swift */,
+				44E5D3DA2C5DFE5D008AD8B3 /* ShoppingViewController.swift */,
+			);
+			path = Shopping;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -144,6 +175,7 @@
 				44E5D3A22C5B9D2E008AD8B3 /* Sources */,
 				44E5D3A32C5B9D2E008AD8B3 /* Frameworks */,
 				44E5D3A42C5B9D2E008AD8B3 /* Resources */,
+				44E5D3E32C5E035C008AD8B3 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -154,6 +186,7 @@
 				44E5D3C02C5B9E39008AD8B3 /* RxCocoa */,
 				44E5D3C22C5B9E39008AD8B3 /* RxSwift */,
 				44E5D3C52C5B9E46008AD8B3 /* SnapKit */,
+				44E5D3E02C5E0350008AD8B3 /* RealmSwift */,
 			);
 			productName = SeSACRxThreads_Start;
 			productReference = 44E5D3A62C5B9D2E008AD8B3 /* SeSACRxThreads_Start.app */;
@@ -186,6 +219,7 @@
 			packageReferences = (
 				44E5D3BF2C5B9E39008AD8B3 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				44E5D3C42C5B9E46008AD8B3 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				44E5D3DF2C5E0350008AD8B3 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = 44E5D3A72C5B9D2E008AD8B3 /* Products */;
 			projectDirPath = "";
@@ -219,10 +253,12 @@
 				44E5D3CA2C5B9F6C008AD8B3 /* PointButton.swift in Sources */,
 				44E5D3BE2C5B9E07008AD8B3 /* BaseViewController.swift in Sources */,
 				44E5D3AA2C5B9D2E008AD8B3 /* AppDelegate.swift in Sources */,
+				44E5D3DE2C5DFE75008AD8B3 /* Model.swift in Sources */,
 				44E5D3D92C5D5B02008AD8B3 /* BirthdayViewModel.swift in Sources */,
 				44E5D3D02C5CE0D1008AD8B3 /* BirthdayViewController.swift in Sources */,
 				44E5D3D62C5D51A5008AD8B3 /* PhoneViewModel.swift in Sources */,
 				44E5D3AC2C5B9D2E008AD8B3 /* SceneDelegate.swift in Sources */,
+				44E5D3DB2C5DFE5D008AD8B3 /* ShoppingViewController.swift in Sources */,
 				44E5D3CE2C5CC460008AD8B3 /* PhoneViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -464,6 +500,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		44E5D3DF2C5E0350008AD8B3 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 10.52.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -481,6 +525,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 44E5D3C42C5B9E46008AD8B3 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		44E5D3E02C5E0350008AD8B3 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 44E5D3DF2C5E0350008AD8B3 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
