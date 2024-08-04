@@ -33,6 +33,13 @@ final class ShoppingRepository {
         return list
     }
     
+    func fetchItemWithSearchTitle(searchKeyword: String, dateAscending: Bool = false) -> Results<Shopping> {
+        let list = realm.objects(Shopping.self).sorted(byKeyPath: Shopping.Key.date.rawValue, ascending: dateAscending).where { item in
+            item.title.contains(searchKeyword)
+        }
+        return list
+    }
+    
     func updateItem(data: Shopping, title: String) {
         do {
             try realm.write {

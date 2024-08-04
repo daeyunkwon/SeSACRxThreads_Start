@@ -26,8 +26,11 @@ final class ShoppingViewController: BaseViewController {
         tv.register(ShoppingTableViewCell.self, forCellReuseIdentifier: ShoppingTableViewCell.identifier)
         tv.register(ShoppingTableViewHeaderCell.self, forHeaderFooterViewReuseIdentifier: ShoppingTableViewHeaderCell.identifier)
         tv.sectionHeaderHeight = 120
+        tv.keyboardDismissMode = .onDrag
         return tv
     }()
+    
+    private let searchBar = UISearchBar()
     
     //MARK: - Life Cycle
     
@@ -63,16 +66,29 @@ final class ShoppingViewController: BaseViewController {
                 vc.viewModel.loadShopping.onNext(data)
                 
                 vc.viewModel.onDataUpdate = { [weak self] in
-                    self?.viewModel.loadItem.onNext(())
+                    guard let self else { return }
+                    self.searchBar.rx.text.orEmpty
+                        .bind(with: self, onNext: { owner, value in
+                            owner.viewModel.searchItem.onNext(value)
+                        })
+                        .disposed(by: disposeBag)
                 }
                 
                 owner.navigationController?.pushViewController(vc, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        searchBar.rx.text.orEmpty
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self, onNext: { owner, text in
+                owner.viewModel.searchItem.onNext(text)
             })
             .disposed(by: disposeBag)
     }
     
     override func setupNavi() {
         navigationItem.title = "쇼핑"
+        navigationItem.titleView = searchBar
     }
     
     override func configureLayout() {

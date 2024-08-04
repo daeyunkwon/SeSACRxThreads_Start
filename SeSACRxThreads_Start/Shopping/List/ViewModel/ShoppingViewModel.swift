@@ -9,6 +9,7 @@ import Foundation
 
 import RealmSwift
 import RxSwift
+import RxCocoa
 
 final class ShoppingViewModel {
     
@@ -29,9 +30,11 @@ final class ShoppingViewModel {
     
     let deleteItem = PublishSubject<Shopping>()
     
+    let searchItem = PublishSubject<String>()
+    
     //MARK: - Outputs
     
-    private(set) var shoppingList = BehaviorSubject<[Shopping]>(value: [])
+    private(set) var shoppingList = BehaviorRelay<[Shopping]>(value: [])
     
     //MARK: - Init
     
@@ -69,13 +72,25 @@ final class ShoppingViewModel {
                 owner.fetchData()
             }
             .disposed(by: disposeBag)
+        
+        searchItem
+            .debounce(.seconds(0), scheduler: MainScheduler.instance)
+            .bind(with: self) { owner, value in
+                if value.isEmpty {
+                    owner.fetchData()
+                } else {
+                    let result = owner.repository.fetchItemWithSearchTitle(searchKeyword: value)
+                    owner.shoppingList.accept(Array(result))
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     //MARK: - Methods
     
     private func fetchData() {
         let result = repository.fetchAllItem(dateAscending: false)
-        shoppingList.onNext(Array(result))
+        shoppingList.accept(Array(result))
     }
     
 }
