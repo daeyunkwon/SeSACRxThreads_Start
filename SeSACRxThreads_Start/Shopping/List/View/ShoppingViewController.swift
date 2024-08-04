@@ -59,7 +59,14 @@ final class ShoppingViewController: BaseViewController {
         
         tableView.rx.modelSelected(Shopping.self)
             .bind(with: self, onNext: { owner, data in
-                //owner.navigationController?.pushViewController(ShoppingDetailViewController(), animated: true)
+                let vc = ShoppingDetailViewController()
+                vc.viewModel.loadShopping.onNext(data)
+                
+                vc.viewModel.onDataUpdate = { [weak self] in
+                    self?.viewModel.loadItem.onNext(())
+                }
+                
+                owner.navigationController?.pushViewController(vc, animated: true)
             })
             .disposed(by: disposeBag)
     }

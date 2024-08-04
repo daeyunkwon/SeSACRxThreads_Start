@@ -20,6 +20,8 @@ final class ShoppingViewModel {
     
     //MARK: - Inputs
     
+    let loadItem = BehaviorSubject<Void>(value: ())
+    
     let addItem = PublishSubject<String>()
     
     let updateDone = PublishSubject<Shopping>()
@@ -34,7 +36,11 @@ final class ShoppingViewModel {
     //MARK: - Init
     
     init() {
-        fetchData()
+        loadItem
+            .bind(with: self) { owner, _ in
+                owner.fetchData()
+            }
+            .disposed(by: disposeBag)
         
         addItem
             .bind(with: self) { owner, value in
@@ -63,8 +69,6 @@ final class ShoppingViewModel {
                 owner.fetchData()
             }
             .disposed(by: disposeBag)
-        
-        
     }
     
     //MARK: - Methods

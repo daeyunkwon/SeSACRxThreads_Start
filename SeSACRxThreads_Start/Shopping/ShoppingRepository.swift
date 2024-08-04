@@ -33,6 +33,25 @@ final class ShoppingRepository {
         return list
     }
     
+    func updateItem(data: Shopping, title: String) {
+        do {
+            try realm.write {
+                
+                let newValue = [
+                    Shopping.Key.id.rawValue: data.id,
+                    Shopping.Key.title.rawValue: title,
+//                    Shopping.Key.done.rawValue: data.done,
+//                    Shopping.Key.favorite.rawValue: data.favorite,
+                ]
+                
+                realm.create(Shopping.self, value: newValue, update: .modified)
+                print("DEBUG: Realm Update Succeed")
+            }
+        } catch {
+            print("DEBUG: Realm Update Failed")
+        }
+    }
+    
     func updateDone(data: Shopping) {
         var changeValue = data.done
         changeValue.toggle()
