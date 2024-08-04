@@ -24,7 +24,7 @@ class BirthdayViewModel {
      
     //MARK: - Inputs
     
-    var calculationAge = PublishSubject<Date>()
+    let calculationAge = PublishSubject<Date>()
     
     //MARK: - Outputs
     
