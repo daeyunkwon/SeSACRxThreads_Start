@@ -8,31 +8,45 @@
 import Foundation
 
 import RxSwift
+import RxCocoa
 
-class PasswordViewModel {
+final class PasswordViewModel {
+    
+    //MARK: - Properties
+    
+    private let disposeBag = DisposeBag()
     
     //MARK: - Inputs
     
-    let disposeBag = DisposeBag()
-    
-    var validPasswordText = PublishSubject<String>()
+    struct Input {
+        let nextButtonTap: ControlEvent<Void>
+        let password: ControlProperty<String>
+    }
     
     //MARK: - Outputs
     
-    private(set) lazy var viewDidLoad = Observable.combineLatest(self.initialEnabled, self.initialHidden)
-    private(set) var initialEnabled = Observable.just(false)
-    private(set) var initialHidden = Observable.just(true)
+    struct Output {
+        let nextButtonTap: ControlEvent<Void>
+        let setupViewDidLoad: Observable<(Bool, Bool)>
+        let validationMessage: Observable<String>
+        let passwordValidationStatus: SharedSequence<DriverSharingStrategy, Bool>
+    }
     
-    private(set) var validationMessage = Observable.just("8자 이상 입력해주세요!")
+    //MARK: - Methods
     
-    private(set) var isPasswordValid = PublishSubject<Bool>()
-    
-    //MARK: - Init
-    
-    init() {
-        validPasswordText
+    func transform(input: Input) -> Output {
+        let nextButtonTap = input.nextButtonTap
+        
+        let setupViewDidLoad = Observable.combineLatest(Observable.just(false), Observable.just(true))
+        
+        let validationMessage = Observable.just("8자 이상 입력해주세요!")
+        
+        let passwordValidationStatus = input.password
+            .filter { !$0.isEmpty }
             .map { $0.count >= 8 }
-            .bind(to: isPasswordValid)
-            .disposed(by: disposeBag)
+            .asDriver(onErrorJustReturn: false)
+        
+        
+        return Output(nextButtonTap: nextButtonTap, setupViewDidLoad: setupViewDidLoad, validationMessage: validationMessage, passwordValidationStatus: passwordValidationStatus)
     }
 }

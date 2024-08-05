@@ -32,6 +32,9 @@ final class ShoppingViewModel {
     
     let searchItem = PublishSubject<String>()
     
+    let first = PublishSubject<Bool>()
+    let second = PublishSubject<Int>()
+    
     //MARK: - Outputs
     
     private(set) var shoppingList = BehaviorRelay<[Shopping]>(value: [])
@@ -39,6 +42,21 @@ final class ShoppingViewModel {
     //MARK: - Init
     
     init() {
+        Observable.combineLatest(first, second) { value1, value2 in
+            return "\(value1), \(value2)"
+        }
+        .bind { value in
+            print(value)
+        }
+        .disposed(by: disposeBag)
+        
+        first.onNext(false)
+        second.onNext(22)
+        second.onNext(23)
+        first.onNext(true)
+        
+        
+        
         loadItem
             .bind(with: self) { owner, _ in
                 owner.fetchData()

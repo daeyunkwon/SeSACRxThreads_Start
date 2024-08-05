@@ -41,8 +41,15 @@ class PasswordViewController: BaseViewController {
     
     //MARK: - Configurations
     
+    deinit {
+        print("PasswordVC deinit")
+    }
+    
     override func bind() {
-        viewModel.viewDidLoad
+        let input = PasswordViewModel.Input(nextButtonTap: nextButton.rx.tap, password: passwordTextField.rx.text.orEmpty)
+        let output = viewModel.transform(input: input)
+        
+        output.setupViewDidLoad
             .bind(onNext: { [weak self] enabledValue, hiddenValue in
                 self?.nextButton.isEnabled = enabledValue
                 self?.nextButton.backgroundColor = .systemGray2
@@ -50,27 +57,20 @@ class PasswordViewController: BaseViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.validationMessage
+        output.validationMessage
             .bind(to: descriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
-        passwordTextField.rx.text.orEmpty
-            .filter { !$0.isEmpty }
-            .bind(to: viewModel.validPasswordText)
+        output.passwordValidationStatus
+            .drive(nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
-        passwordTextField.rx.text.orEmpty
-            .filter { $0.isEmpty }
-            .bind(with: self, onNext: { owner, _ in
-                owner.descriptionLabel.isHidden = true
-            })
+        output.passwordValidationStatus
+            .drive(descriptionLabel.rx.isHidden)
             .disposed(by: disposeBag)
         
-        viewModel.isPasswordValid
-            .bind(with: self) { owner, value in
-                owner.descriptionLabel.isHidden = value
-                owner.nextButton.isEnabled = value
-                
+        output.passwordValidationStatus
+            .drive(with: self) { owner, value in
                 if value {
                     owner.nextButton.backgroundColor = UIColor.systemBlue
                 } else {
@@ -79,10 +79,17 @@ class PasswordViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
-        nextButton.rx.tap
-            .bind(with: self, onNext: { owner, _ in
+        output.nextButtonTap
+            .bind(with: self) { owner, _ in
                 owner.showCompletionAlert()
-            })
+//                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+//                let sceneDelegate = windowScene?.delegate as? SceneDelegate
+//                
+//                let navigationController = UINavigationController(rootViewController: BirthdayViewController())
+//                
+//                sceneDelegate?.window?.rootViewController = navigationController
+//                sceneDelegate?.window?.makeKeyAndVisible()
+            }
             .disposed(by: disposeBag)
     }
     
