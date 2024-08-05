@@ -10,35 +10,47 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class BirthdayViewModel {
+final class BirthdayViewModel {
     
     //MARK: - Properties
     
-    let disposeBag = DisposeBag()
-    
-    private var year = PublishRelay<Int>()
-    private var month = PublishRelay<Int>()
-    private var day = PublishRelay<Int>()
-    
-    private var validationAge = PublishSubject<Int>()
+    private let disposeBag = DisposeBag()
      
     //MARK: - Inputs
     
-    let calculationAge = PublishSubject<Date>()
+    struct Input {
+        let pickerDate: ControlProperty<Date>
+        let nextButtonTap: ControlEvent<Void>
+    }
     
     //MARK: - Outputs
     
-    private(set) var today = PublishSubject<Date>()
+    struct Output {
+        let setupToday: Observable<Date>
+        let yearText: BehaviorRelay<String>
+        let monthText: BehaviorRelay<String>
+        let dayText: BehaviorRelay<String>
+        let validationAgeStatus: BehaviorRelay<Bool>
+        let nextButtonTap: ControlEvent<Void>
+    }
     
-    private(set) var yearText = PublishRelay<String>()
-    private(set) var monthText = PublishRelay<String>()
-    private(set) var dayText = PublishRelay<String>()
+    //MARK: - Methods
     
-    private(set) var isValidAge = PublishRelay<Bool>()
-    
-    //MARK: - Init
-    
-    init() {
+    func transform(input: Input) -> Output {
+        
+        let setupToday: Observable<Date> = Observable.just(Date())
+        let yearText = BehaviorRelay<String>(value: "")
+        let monthText = BehaviorRelay<String>(value: "")
+        let dayText = BehaviorRelay<String>(value: "")
+        let validationAgeStatus = BehaviorRelay<Bool>(value: false)
+        
+        let year = PublishRelay<Int>()
+        let month = PublishRelay<Int>()
+        let day = PublishRelay<Int>()
+        
+        let validationAge = PublishSubject<Int>()
+        let valid = PublishSubject<Date>()
+        
         year
             .map { "\($0)년" }
             .bind(to: yearText)
@@ -54,30 +66,19 @@ class BirthdayViewModel {
             .bind(to: dayText)
             .disposed(by: disposeBag)
         
-        Observable.just(Date())
-            .bind(with: self) { owner, value in
-                owner.today.onNext(value)
-                
-                let dateComponent = Calendar.current.dateComponents([.year, .month, .day], from: value)
-                
-                owner.year.accept(dateComponent.year ?? 0)
-                owner.month.accept(dateComponent.month ?? 0)
-                owner.day.accept(dateComponent.day ?? 0)
+        validationAge
+            .map { $0 >= 17 }
+            .bind { value in
+                validationAgeStatus.accept(value)
             }
             .disposed(by: disposeBag)
         
-        validationAge
-            .map { $0 >= 17 }
-            .bind(to: isValidAge)
-            .disposed(by: disposeBag)
-        
-        
-        calculationAge
+        valid
             .map { Calendar.current.dateComponents([.year, .month, .day], from: $0) }
-            .bind(with: self) { owner, value in
-                owner.year.accept(value.year ?? 0)
-                owner.month.accept(value.month ?? 0)
-                owner.day.accept(value.day ?? 0)
+            .bind{ value in
+                year.accept(value.year ?? 0)
+                month.accept(value.month ?? 0)
+                day.accept(value.day ?? 0)
                 
                 //만나이 계산법: 현재 연도에서 출생 연도를 뺀 다음, 생일이 지났으면 그대로, 지나지 않았으면 1년을 더 빼기
                 let todayComponent = Calendar.current.dateComponents([.year, .month, .day], from: Date())
@@ -92,9 +93,24 @@ class BirthdayViewModel {
                     }
                 }
                 
-                owner.validationAge.onNext(age)
+                validationAge.onNext(age)
             }
             .disposed(by: disposeBag)
+        
+        setupToday
+            .bind { value in
+                valid.onNext(value)
+            }
+            .disposed(by: disposeBag)
+        
+        input.pickerDate
+            .bind { value in
+                valid.onNext(value)
+            }
+            .disposed(by: disposeBag)
+        
+        
+        return Output(setupToday: setupToday, yearText: yearText, monthText: monthText, dayText: dayText, validationAgeStatus: validationAgeStatus, nextButtonTap: input.nextButtonTap)
     }
     
 }

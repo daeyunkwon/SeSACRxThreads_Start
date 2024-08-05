@@ -47,7 +47,7 @@ class BirthdayViewController: BaseViewController {
     
     let yearLabel: UILabel = {
         let label = UILabel()
-        label.text = "2023년"
+        label.text = "8888년"
         label.textColor = UIColor.black
         label.snp.makeConstraints {
             $0.width.equalTo(100)
@@ -86,23 +86,26 @@ class BirthdayViewController: BaseViewController {
     //MARK: - Configurations
     
     override func bind() {
-        viewModel.yearText
+        let input = BirthdayViewModel.Input(pickerDate: birthDayPicker.rx.date, nextButtonTap: nextButton.rx.tap)
+        let output = viewModel.transform(input: input)
+        
+        output.yearText
             .bind(to: yearLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.monthText
+        output.monthText
             .bind(to: monthLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.dayText
+        output.dayText
             .bind(to: dayLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.today
+        output.setupToday
             .bind(to: birthDayPicker.rx.date)
             .disposed(by: disposeBag)
         
-        viewModel.isValidAge
+        output.validationAgeStatus
             .bind(with: self) { owner, value in
                 owner.nextButton.isEnabled = value
                 
@@ -118,11 +121,7 @@ class BirthdayViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
-        birthDayPicker.rx.date
-            .bind(to: viewModel.calculationAge)
-            .disposed(by: disposeBag)
-        
-        nextButton.rx.tap
+        output.nextButtonTap
             .bind(with: self) { owner, _ in
                 owner.showCompletionAlert()
             }
