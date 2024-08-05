@@ -21,73 +21,70 @@ final class ShoppingViewModel {
     
     //MARK: - Inputs
     
-    let loadItem = BehaviorSubject<Void>(value: ())
-    
-    let addItem = PublishSubject<String>()
-    
-    let updateDone = PublishSubject<Shopping>()
-    let updateFavorite = PublishSubject<Shopping>()
-    
-    let deleteItem = PublishSubject<Shopping>()
-    
-    let searchItem = PublishSubject<String>()
-    
-    let first = PublishSubject<Bool>()
-    let second = PublishSubject<Int>()
+    struct Input {
+        let modelDeleted: ControlEvent<Shopping>
+        let modelSelected: ControlEvent<Shopping>
+        let search: ControlProperty<String>
+        let addButtonTap = PublishSubject<String>()
+        let doneButtonTap = PublishSubject<Shopping>()
+        let favoriteButtonTap = PublishSubject<Shopping>()
+    }
     
     //MARK: - Outputs
     
-    private(set) var shoppingList = BehaviorRelay<[Shopping]>(value: [])
+    struct Output {
+        let shoppingList: BehaviorSubject<[Shopping]>
+        let modelSelected: ControlEvent<Shopping>
+    }
     
-    //MARK: - Init
+    //MARK: - Methods
     
-    init() {
-        Observable.combineLatest(first, second) { value1, value2 in
-            return "\(value1), \(value2)"
-        }
-        .bind { value in
-            print(value)
-        }
-        .disposed(by: disposeBag)
+    private func fetchData() -> [Shopping] {
+        let result = repository.fetchAllItem(dateAscending: false)
+        return Array(result)
+    }
+    
+    func transform(input: Input) -> Output {
+        let shoppingList = BehaviorSubject<[Shopping]>(value: [])
         
-        first.onNext(false)
-        second.onNext(22)
-        second.onNext(23)
-        first.onNext(true)
-        
-        
+        let loadItem = BehaviorSubject<Void>(value: ())
+        let addItem = PublishSubject<String>()
+        let updateDone = PublishSubject<Shopping>()
+        let updateFavorite = PublishSubject<Shopping>()
+        let deleteItem = PublishSubject<Shopping>()
+        let searchItem = PublishSubject<String>()
         
         loadItem
             .bind(with: self) { owner, _ in
-                owner.fetchData()
+                shoppingList.onNext(owner.fetchData())
             }
             .disposed(by: disposeBag)
         
         addItem
             .bind(with: self) { owner, value in
                 owner.repository.createItem(title: value)
-                owner.fetchData()
+                shoppingList.onNext(owner.fetchData())
             }
             .disposed(by: disposeBag)
         
         updateDone
             .bind(with: self) { owner, value in
                 owner.repository.updateDone(data: value)
-                owner.fetchData()
+                shoppingList.onNext(owner.fetchData())
             }
             .disposed(by: disposeBag)
         
         updateFavorite
             .bind(with: self) { owner, value in
                 owner.repository.updateFavorite(data: value)
-                owner.fetchData()
+                shoppingList.onNext(owner.fetchData())
             }
             .disposed(by: disposeBag)
         
         deleteItem
             .bind(with: self) { owner, value in
                 owner.repository.deleteItem(data: value)
-                owner.fetchData()
+                shoppingList.onNext(owner.fetchData())
             }
             .disposed(by: disposeBag)
         
@@ -95,20 +92,36 @@ final class ShoppingViewModel {
             .debounce(.seconds(0), scheduler: MainScheduler.instance)
             .bind(with: self) { owner, value in
                 if value.isEmpty {
-                    owner.fetchData()
+                    shoppingList.onNext(owner.fetchData())
                 } else {
                     let result = owner.repository.fetchItemWithSearchTitle(searchKeyword: value)
-                    owner.shoppingList.accept(Array(result))
+                    shoppingList.onNext(Array(result))
                 }
             }
             .disposed(by: disposeBag)
-    }
-    
-    //MARK: - Methods
-    
-    private func fetchData() {
-        let result = repository.fetchAllItem(dateAscending: false)
-        shoppingList.accept(Array(result))
+        
+        input.modelDeleted
+            .bind(to: deleteItem)
+            .disposed(by: disposeBag)
+        
+        input.search
+            .bind(to: searchItem)
+            .disposed(by: disposeBag)
+        
+        input.addButtonTap
+            .bind(to: addItem)
+            .disposed(by: disposeBag)
+        
+        input.doneButtonTap
+            .bind(to: updateDone)
+            .disposed(by: disposeBag)
+        
+        input.favoriteButtonTap
+            .bind(to: updateFavorite)
+            .disposed(by: disposeBag)
+        
+        
+        return Output(shoppingList: shoppingList, modelSelected: input.modelSelected)
     }
     
 }

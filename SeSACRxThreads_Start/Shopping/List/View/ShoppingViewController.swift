@@ -19,6 +19,8 @@ final class ShoppingViewController: BaseViewController {
     
     private let viewModel = ShoppingViewModel()
     
+    private lazy var input = ShoppingViewModel.Input(modelDeleted: tableView.rx.modelDeleted(Shopping.self), modelSelected: tableView.rx.modelSelected(Shopping.self), search: searchBar.rx.text.orEmpty)
+    
     //MARK: - UI Components
     
     private lazy var tableView: UITableView = {
@@ -41,7 +43,10 @@ final class ShoppingViewController: BaseViewController {
     //MARK: - Configurations
     
     override func bind() {
-        viewModel.shoppingList
+        
+        let output = viewModel.transform(input: self.input)
+        
+        output.shoppingList
             .bind(to: tableView.rx.items(cellIdentifier: ShoppingTableViewCell.identifier, cellType: ShoppingTableViewCell.self)) { row, element, cell in
                 cell.cellConfig(data: element)
                 cell.shopping = element
@@ -54,34 +59,17 @@ final class ShoppingViewController: BaseViewController {
         tableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
-        tableView.rx.modelDeleted(Shopping.self)
-            .bind(with: self, onNext: { owner, data in
-                owner.viewModel.deleteItem.onNext(data)
-            })
-            .disposed(by: disposeBag)
-        
-        tableView.rx.modelSelected(Shopping.self)
+        output.modelSelected
             .bind(with: self, onNext: { owner, data in
                 let vc = ShoppingDetailViewController()
                 vc.viewModel.loadShopping.onNext(data)
                 
                 vc.viewModel.onDataUpdate = { [weak self] in
                     guard let self else { return }
-                    self.searchBar.rx.text.orEmpty
-                        .bind(with: self, onNext: { owner, value in
-                            owner.viewModel.searchItem.onNext(value)
-                        })
-                        .disposed(by: disposeBag)
+                    self.tableView.reloadData()
                 }
                 
                 owner.navigationController?.pushViewController(vc, animated: true)
-            })
-            .disposed(by: disposeBag)
-        
-        searchBar.rx.text.orEmpty
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self, onNext: { owner, text in
-                owner.viewModel.searchItem.onNext(text)
             })
             .disposed(by: disposeBag)
     }
@@ -159,7 +147,7 @@ extension ShoppingViewController: ShoppingTableViewHeaderCellDelegate {
             return
         }
         
-        viewModel.addItem.onNext(title)
+        self.input.addButtonTap.onNext(title)
     }
 }
 
@@ -169,11 +157,11 @@ extension ShoppingViewController: ShoppingTableViewCellDelegate {
     
     func doneButtonTapped(sender: ShoppingTableViewCell) {
         guard let data = sender.shopping else { return }
-        viewModel.updateDone.onNext(data)
+        self.input.doneButtonTap.onNext(data)
     }
     
     func favoriteButtonTapped(sender: ShoppingTableViewCell) {
         guard let data = sender.shopping else { return }
-        viewModel.updateFavorite.onNext(data)
+        self.input.favoriteButtonTap.onNext(data)
     }
 }
