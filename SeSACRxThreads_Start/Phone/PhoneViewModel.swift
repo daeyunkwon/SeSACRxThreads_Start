@@ -8,69 +8,85 @@
 import Foundation
 
 import RxSwift
+import RxCocoa
 
-class PhoneViewModel {
+final class PhoneViewModel {
     
     //MARK: - Properties
     
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     //MARK: - Inputs
     
-    var validationTextCount = PublishSubject<String>()
-    
-    var validationTextNumberAndHyphen = PublishSubject<String>()
+    struct Input {
+        let phoneNumber: ControlProperty<String>
+        let nextButtonTap: ControlEvent<Void>
+    }
     
     //MARK: - Outputs
     
-    private(set) var phoneTextFieldInitialValue = Observable.just("010")
+    struct Output {
+        let setupPhoneTextFieldAndNextButton: Observable<(String, Bool)>
+        let phoneNumberValidationStatus: Observable<Bool>
+        let validationMessage: PublishSubject<String>
+        let nextButtonTap: ControlEvent<Void>
+        let phoneTextEmpty: Observable<Bool>
+    }
     
-    private(set) var isNumberValid = PublishSubject<Bool>()
+    //MARK: - Methods
     
-    private(set) var isCountValid = PublishSubject<Bool>()
-    
-    private(set) var validationMessage = PublishSubject<String>()
-    
-    private(set) var isValid = PublishSubject<Bool>()
-    
-    //MARK: - Init
-    
-    init() {
-        validationTextCount
+    func transform(input: Input) -> Output {
+        let phoneTextFieldInitialValue = Observable.just("010")
+        let nextButtonInitalValue = Observable.just(false)
+        let setup = Observable.combineLatest(phoneTextFieldInitialValue, nextButtonInitalValue)
+        let validationMessage = PublishSubject<String>()
+        let numberValidStatus = BehaviorSubject<Bool>(value: false)
+        let countValidStatus = PublishSubject<Bool>()
+        let phoneTextEmpty = BehaviorSubject<Bool>(value: false)
+        
+        let phoneNumberValidationStatus = Observable.combineLatest(numberValidStatus, countValidStatus) { value1, value2 in
+            return value1 && value2
+        }
+        
+        input.phoneNumber
+            .map { $0.isEmpty }
+            .bind { value in
+                phoneTextEmpty.onNext(value)
+            }
+            .disposed(by: disposeBag)
+        
+        input.phoneNumber
             .filter { !$0.isEmpty }
             .map { $0.count >= 10 }
-            .bind(with: self) { owner, value in
-                owner.isCountValid.onNext(value)
+            .bind { value in
+                countValidStatus.onNext(value)
                 
                 if !value {
-                    owner.validationMessage.onNext("10자 이상 입력해주세요!")
+                    validationMessage.onNext("10자 이상 입력해주세요!")
                 }
             }
             .disposed(by: disposeBag)
         
-        validationTextNumberAndHyphen
+        input.phoneNumber
             .filter { !$0.isEmpty } // 빈 문자열을 필터링
-            .bind(with: self) { owner, value in
+            .bind { value in
                 if Int(value) != nil {
-                    owner.isNumberValid.onNext(true)
+                    numberValidStatus.onNext(true)
+                    
                 } else {
-                    owner.isNumberValid.onNext(false)
+                    numberValidStatus.onNext(false)
                     
                     if value.contains("-") {
-                        owner.validationMessage.onNext("'-'를 제외한 숫자만 입력해주세요!")
+                        validationMessage.onNext("'-'를 제외한 숫자만 입력해주세요!")
                     } else {
-                        owner.validationMessage.onNext("숫자만 입력해주세요!")
+                        validationMessage.onNext("숫자만 입력해주세요!")
                     }
                 }
             }
             .disposed(by: disposeBag)
         
-        Observable.combineLatest(isNumberValid ,isCountValid) { numberValid, countValid in
-            return numberValid && countValid
-        }
-        .bind(to: isValid)
-        .disposed(by: disposeBag)
         
+        return Output(setupPhoneTextFieldAndNextButton: setup, phoneNumberValidationStatus: phoneNumberValidationStatus, validationMessage: validationMessage, nextButtonTap: input.nextButtonTap, phoneTextEmpty: phoneTextEmpty)
     }
     
 }

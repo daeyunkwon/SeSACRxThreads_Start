@@ -40,22 +40,28 @@ class PhoneViewController: BaseViewController {
     //MARK: - Configurations
     
     override func bind() {
-        phoneTextField.rx.text.orEmpty
-            .filter { $0.isEmpty }
-            .bind(with: self, onNext: { owner, _ in
-                owner.descriptionLabel.isHidden = true
-            })
-            .disposed(by: disposeBag)
+        let input = PhoneViewModel.Input(phoneNumber: phoneTextField.rx.text.orEmpty, nextButtonTap: nextButton.rx.tap)
+        let output = viewModel.transform(input: input)
         
-        viewModel.phoneTextFieldInitialValue
-            .bind(to: phoneTextField.rx.text.orEmpty)
-            .disposed(by: disposeBag)
-        
-        viewModel.validationMessage
+        output.validationMessage
             .bind(to: descriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.isValid
+        output.setupPhoneTextFieldAndNextButton
+            .bind(onNext: { [weak self] text, enabled in
+                self?.phoneTextField.text = text
+                self?.nextButton.isEnabled = enabled
+                self?.nextButton.backgroundColor = .systemGray2
+            })
+            .disposed(by: disposeBag)
+        
+        output.phoneTextEmpty
+            .bind(with: self) { owner, value in
+                owner.descriptionLabel.isHidden = value
+            }
+            .disposed(by: disposeBag)
+        
+        output.phoneNumberValidationStatus
             .bind(with: self) { owner, value in
                 owner.descriptionLabel.isHidden = value
                 owner.nextButton.isEnabled = value
@@ -67,16 +73,8 @@ class PhoneViewController: BaseViewController {
                 }
             }
             .disposed(by: disposeBag)
-            
-        phoneTextField.rx.text.orEmpty
-            .bind(to: viewModel.validationTextCount)
-            .disposed(by: disposeBag)
         
-        phoneTextField.rx.text.orEmpty
-            .bind(to: viewModel.validationTextNumberAndHyphen)
-            .disposed(by: disposeBag)
-        
-        nextButton.rx.tap
+        output.nextButtonTap
             .bind(with: self) { owner, _ in
                 owner.showCompletionAlert()
             }
