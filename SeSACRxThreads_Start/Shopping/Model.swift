@@ -8,8 +8,12 @@
 import Foundation
 
 import RealmSwift
+import Differentiator
 
-class Shopping: Object {
+class Shopping: Object, IdentifiableType {
+    var identity: String = UUID().uuidString
+    typealias Identity = String
+    
     @Persisted(primaryKey: true) var id: ObjectId
     
     @Persisted var title: String
@@ -18,12 +22,12 @@ class Shopping: Object {
     @Persisted var date: Date
     
     
-    convenience init(title: String) {
+    convenience init(title: String, done: Bool = false, favorite: Bool = false, date: Date = Date()) {
         self.init()
         self.title = title
-        self.done = false
-        self.favorite = false
-        self.date = Date()
+        self.done = done
+        self.favorite = favorite
+        self.date = date
     }
     
     enum Key: String {

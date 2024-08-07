@@ -10,7 +10,7 @@ import UIKit
 import RxCocoa
 import SnapKit
 
-final class ShoppingTableViewHeaderCell: UITableViewHeaderFooterView {
+final class ShoppingTableViewHeaderCell: UITableViewCell {
     
     //MARK: - Properties
     
@@ -47,8 +47,14 @@ final class ShoppingTableViewHeaderCell: UITableViewHeaderFooterView {
     
     //MARK: - Init
     
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
+//    override init(reuseIdentifier: String?) {
+//        super.init(reuseIdentifier: reuseIdentifier)
+//        contentView.backgroundColor = .systemBackground
+//        configureLayout()
+//    }
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .systemBackground
         configureLayout()
     }
