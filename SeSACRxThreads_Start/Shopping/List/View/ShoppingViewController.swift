@@ -30,8 +30,7 @@ struct MySection {
 }
 
 extension MySection: AnimatableSectionModelType {
-
-
+    
     init(original: MySection, items: [Shopping]) {
         self = original
         self.items = items
@@ -150,7 +149,7 @@ final class ShoppingViewController: BaseViewController {
         }
         
         dataSource.canMoveRowAtIndexPath = { dataSource, index in
-            return true
+            return false
         }
         
         dataSource.canEditRowAtIndexPath = { dataSource, index in
@@ -167,9 +166,6 @@ final class ShoppingViewController: BaseViewController {
         subject
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-
-        
-        
     }
     
     override func setupNavi() {
@@ -207,11 +203,18 @@ extension ShoppingViewController: UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: ShoppingTableViewHeaderCell.identifier) as! ShoppingTableViewHeaderCell
         cell.delegate = self
+        
+        cell.collectionView.rx.modelSelected(String.self)
+            .bind(with: self) { owner, title in
+                owner.input.addButtonTap.onNext(title)
+            }
+            .disposed(by: disposeBag)
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        120
+        150
     }
     
     
