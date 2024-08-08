@@ -54,10 +54,12 @@ final class ShoppingTableViewHeaderCell: UITableViewCell {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 5
         layout.scrollDirection = .horizontal
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.register(ShoppingCollectionViewCell.self, forCellWithReuseIdentifier: ShoppingCollectionViewCell.identifier)
         cv.showsHorizontalScrollIndicator = false
+        
         return cv
     }()
     
@@ -139,21 +141,21 @@ final class ShoppingTableViewHeaderCell: UITableViewCell {
 }
 
 extension ShoppingTableViewHeaderCell: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        guard let item = try? collectionView.rx.model(at: indexPath) as String else {
-            return CGSize(width: collectionView.frame.width, height: 50)
-        }
-    
-        let width = calculateWidth(for: item)
-        return CGSize(width: width + 20, height: 50)
-    }
-    
-    private func calculateWidth(for item: String) -> CGFloat {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 15)
-        label.text = item
-        
-        return label.intrinsicContentSize.width
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        
+//        guard let item = try? collectionView.rx.model(at: indexPath) as String else {
+//            return CGSize(width: collectionView.frame.width, height: 50)
+//        }
+//    
+//        let width = calculateWidth(for: item)
+//        return CGSize(width: width + 20, height: 50)
+//    }
+//    
+//    private func calculateWidth(for item: String) -> CGFloat {
+//        let label = UILabel()
+//        label.font = .systemFont(ofSize: 15)
+//        label.text = item
+//        
+//        return label.intrinsicContentSize.width
+//    }
 }
